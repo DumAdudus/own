@@ -35,7 +35,7 @@ get_lesson()
     key_url=$(grep -Po "$aes_key_regex" "$local_hls" | head -1) || exit_on_error 'Failed finding AES key URL'
     ${CURL} "$key_url" -o "$aes_key" || exit_on_error 'Failed fetching AES key'
     sed -i -e "s@${aes_key_regex}@${media_id}\\.key@g" "$local_hls"
-    ${FFMPEG} -i "$local_hls" -bsf:a aac_adtstoasc -c copy "${title}.mp4"
+    ${FFMPEG} -i "$local_hls" -bsf:a aac_adtstoasc -c copy "${title}.mp4" || exit_on_error "Failed to get lesson $id"
 }
 
 main()
@@ -44,7 +44,7 @@ main()
     local lesson_id_start=6192 lesson_id_end=6207
     local lesson_id_start=6194 lesson_id_end=6194
     for id in $(seq ${lesson_id_start} ${lesson_id_end}); do
-        get_lesson "$id" || exit 1
+        get_lesson "$id"
     done
 }
 

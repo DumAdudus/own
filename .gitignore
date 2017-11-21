@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+
+# Special Files not to commit
+yfb_cookie.txt

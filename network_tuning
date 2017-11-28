@@ -1,0 +1,62 @@
+#!/bin/bash
+
+[ -w / ] || {
+    echo "Run with root!" >&2
+    exit 1
+}
+
+# TCP buffer
+cat /proc/sys/net/ipv4/tcp_mem
+
+# receive socket memory
+cat /proc/sys/net/core/rmem_default
+cat /proc/sys/net/core/rmem_max
+
+# send socket memory
+cat /proc/sys/net/core/wmem_default
+cat /proc/sys/net/core/wmem_max
+
+cat /proc/sys/net/core/optmem_max
+
+# Discourage Linux from swapping idle processes to disk (default = 60)
+#echo 'vm.swappiness = 10' >> /etc/sysctl.conf
+
+buffer() {
+    max_buffer=16777216      # 12MB buffer
+    min_buffer=4096
+    cat >> /etc/sysctl.conf << TCP_BUFFER
+    net.core.wmem_max = $max_buffer
+    net.core.rmem_max = $max_buffer
+    net.core.wmem_default = $max_buffer
+    net.core.rmem_default = $max_buffer
+    net.core.optmem_max = 40960
+    net.ipv4.tcp_rmem = $min_buffer 87380 $max_buffer
+    net.ipv4.tcp_wmem = $min_buffer 65536 $max_buffer
+TCP_BUFFER
+}
+
+# If set, TCP will not cache metrics on closing connections.
+#echo 'net.ipv4.tcp_no_metrics_save = 1' >> /etc/sysctl.conf
+
+# Set maximum number of packets, queued on the INPUT side, when the interface receives packets faster than kernel can process them.
+#echo 'net.core.netdev_max_backlog = 50000' >> /etc/sysctl.conf
+
+ipv6() {
+    # Disable IPv6
+    disable_flag=1
+    cat >> /etc/sysctl.conf << IPV6
+    net.ipv6.conf.all.disable_ipv6 = $disable_flag
+    net.ipv6.conf.default.disable_ipv6 = $disable_flag
+    net.ipv6.conf.lo.disable_ipv6 = $disable_flag
+IPV6
+}
+
+misc() {
+    echo >> /etc/sysctl.conf << MISC
+    net.ipv4.tcp_slow_start_after_idle = 0
+    net.ipv4.tcp_tw_reuse = 1
+MISC
+}
+
+# Reload
+sysctl -p

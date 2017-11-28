@@ -1,0 +1,10 @@
+pylint
+pep8
+yapf
+futures
+requests
+setuptools
+ipython
+psutil
+icdiff
+yapf

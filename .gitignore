@@ -32,5 +32,8 @@
 *.app
 
 
+# Python
+*.py[co]
+
 # Special Files not to commit
 yfb_cookie.txt

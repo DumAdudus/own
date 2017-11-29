@@ -15,11 +15,11 @@ bytes2mega()
 nics=("$(ls -1 /sys/class/net/|grep -v lo)")
 
 for nic in "${nics[@]}"; do
-    rxb=$(cat /sys/class/net/eth0/statistics/rx_bytes)
-    txb=$(cat /sys/class/net/eth0/statistics/tx_bytes)
+    rxb=$(cat "/sys/class/net/${nic}/statistics/rx_bytes")
+    txb=$(cat "/sys/class/net/${nic}/statistics/tx_bytes")
 
     rxm=$(bytes2mega "$rxb")
     txm=$(bytes2mega "$txb")
 
-    echo "$nic  >  tx: $txm      rx: $rxm"
+    LC_ALL=C.UTF-8 echo -e "$nic:  \u21d1 $txm <-> \u21d3 $rxm\n"
 done

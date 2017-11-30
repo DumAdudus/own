@@ -2,6 +2,7 @@
 
 FFMPEG='ffmpeg -hide_banner -v info'
 yfb_cookie=yfb_cookie.txt
+session_log=yfb.log
 CURL="curl -s -b ${yfb_cookie}"
 aes_key_regex='http://edu.yanfabu.com/hls/[0-9]*/clef/[^"]*'
 py_codes="import json,sys; l=json.load(sys.stdin); print l['title']+'\\n'+l['mediaHLSUri']+'\\n'+l['mediaId']"
@@ -14,17 +15,23 @@ exit_on_error()
     exit 1
 }
 
+log_content()
+{
+    tee -a $session_log
+}
+
 get_lesson()
 {
-    local lesson_id lesson_url
+    local lesson_id lesson_url lesson_info
     lesson_id=$1
     lesson_url=$(printf "http://edu.yanfabu.com/course/%s/lesson/%s" "$course_id" "$lesson_id")
+    lesson_info=$(${CURL} "$lesson_url" | log_content)
 
     local raw title hls_url media_id
-    readarray -t raw <<<"$(${CURL} "$lesson_url" | PYTHONIOENCODING=utf8 python -c "$py_codes")"
+    readarray -t raw <<<"$(echo "$lesson_info" | PYTHONIOENCODING=utf8 python -c "$py_codes")"
     [[ ${#raw[@]} != 3 ]] && exit_on_error "Wrong info got ${raw[*]}, exit!"
     title=${raw[0]}
-    hls_url=$(${CURL} "${raw[1]}" | tail -1; exit "${PIPESTATUS[0]}") || exit_on_error 'Cannot fetch HLS list'
+    hls_url=$(${CURL} "${raw[1]}" | log_content | tail -1; exit "${PIPESTATUS[0]}") || exit_on_error 'Cannot fetch HLS list'
     media_id=${raw[2]}
 
     local local_hls aes_key key_url
@@ -42,7 +49,8 @@ main()
 {
     local course_id=1165
     local lesson_id_start=6192 lesson_id_end=6207
-    local lesson_id_start=6194 lesson_id_end=6194
+    local lesson_id_start=6075 lesson_id_end=6075
+    local lesson_id_start=6192 lesson_id_end=6192
     for id in $(seq ${lesson_id_start} ${lesson_id_end}); do
         get_lesson "$id"
     done

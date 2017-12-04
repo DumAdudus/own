@@ -8,8 +8,8 @@ import re
 import subprocess
 import sys
 import time
-from urlparse import parse_qs, urlparse
 from HTMLParser import HTMLParser
+from urlparse import parse_qs, urlparse
 
 import requests
 from lxml import etree
@@ -200,7 +200,7 @@ class YfbCourse(object):
         if not r.ok:
             log_err_n_exit('Failed to download %s', url)
         with open(transform_filename(filename), 'wb') as f:
-            for chunk in r.iter_content(1024*1024*4):   # 4MB chunk
+            for chunk in r.iter_content(1024 * 1024 * 4):  # 4MB chunk
                 f.write(chunk)
 
 

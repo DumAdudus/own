@@ -3,19 +3,23 @@
 
 import cookielib
 import logging
+import os
 import re
 import subprocess
 import sys
 import time
 from urlparse import parse_qs, urlparse
+from HTMLParser import HTMLParser
 
 import requests
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
+from lxml import etree
+from urllib3 import disable_warnings
+from urllib3.exceptions import InsecureRequestWarning
 
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+disable_warnings(InsecureRequestWarning)
 
 __title__ = 'yfb course downloader'
-__version__ = '1.0'
+__version__ = '1.1'
 __author__ = 'DumAs'
 
 LOGGER = logging.getLogger('')
@@ -28,7 +32,8 @@ LOGGER_HANDLER.setFormatter(
 LOGGER.setLevel(logging.DEBUG)
 
 YFB_COOKIE = 'yfb_cookie.txt'
-LESSON_URI_FMT = 'http://edu.yanfabu.com/course/%s/lesson/%s'
+LESSON_LIST = 'http://edu.yanfabu.com/lessonplugin/lesson/list?courseId=%d'
+LESSON_URI_FMT = 'http://edu.yanfabu.com/course/%d/lesson/%d'
 AES_KEY_REGEX = r'http://edu.yanfabu.com/hls/[0-9]*/clef/[^"]*'
 LOG_FILE = 'yfb.log'
 
@@ -39,7 +44,7 @@ KEY_FILE_ID = 'file_id'
 KEY_APP_ID = 'app_id'
 
 SWF_PLAYLIST = 'http://play.video.qcloud.com/index.php?_t={timestamp:d}&file_id={fileid:d}&interface=Vod_Api_GetPlayInfo&app_id={appid:d}&refer=edu.yanfabu.com'
-#CMD_FFMPEG = 'ffmpeg -hide_banner -v info -i "%s" -bsf:a aac_adtstoasc -c copy "%s.ts"'
+# CMD_FFMPEG = 'ffmpeg -hide_banner -v info -i "%s" -bsf:a aac_adtstoasc -c copy "%s.ts"'
 CMD_FFMPEG = 'ffmpeg -hide_banner -v info -i "%s" -c copy "%s.ts"'
 
 
@@ -58,28 +63,65 @@ def check_response(resp, msg=None):
             log_err_n_exit('Failed to request %s', resp.url)
 
 
+def chwd(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+    os.chdir(path)
+
+
 def write2file(filename, content):
     with open(filename, 'w') as f:
         f.write(content)
 
 
+def transform_filename(filename):
+    LOGGER.debug(filename)
+    # first unescape
+    parser = HTMLParser()
+    unescaped = parser.unescape(filename)
+    # replace '/' with unicode U+2215 '∕'
+    new_name = unescaped.replace('/', u'\u2215')
+    return new_name
+
+
 class YfbCourse(object):
 
     def __init__(self, course_id):
-        self.course_id = course_id
+        self._course_id = course_id
+        self._lessons = []
         cookies = cookielib.MozillaCookieJar('yfb_cookie.txt')
         cookies.load(ignore_expires=True)
         for cookie in cookies:
-            # set cookie expire date to 14 days from now
+            # set cookie expire date to two weeks from today
             cookie.expires = time.time() + 14 * 24 * 3600
         self.req = requests.Session()
         self.req.cookies = cookies
 
+    def get_course_id(self):
+        return self._course_id
+
+    def get_lesson_count(self):
+        return len(self._lessons)
+
     def get_course(self):
-        self._get_lesson(6075)
+        lessons = self._get_lessons()
+        LOGGER.debug(lessons)
+        course_dir = './yfb_course_%d' % self._course_id
+        chwd(course_dir)
+        # for lesson in lessons:
+        for lesson in lessons[lessons.index(6208):]:
+            self._get_lesson(lesson)
+
+    def _get_lessons(self):
+        if not self._lessons:
+            resp = self.req.get(LESSON_LIST % self._course_id)
+            check_response(resp)
+            tree = etree.HTML(resp.content)
+            self._lessons = map(int, tree.xpath('//li/@data-id'))
+        return self._lessons
 
     def _get_lesson(self, lesson_id):
-        lesson_url = LESSON_URI_FMT % (self.course_id, lesson_id)
+        lesson_url = LESSON_URI_FMT % (self._course_id, lesson_id)
 
         resp = self.req.get(lesson_url)
         check_response(resp, 'Failed to get lesson info,')
@@ -112,11 +154,15 @@ class YfbCourse(object):
         video_size = int(video_info['size'])
         LOGGER.debug('Video size: %d B', video_size)
         video_url = None
-        for video in video_info['image_video']['videoUrls']:
-            if video['fileSize'] == video_size:
-                video_url = video['url']
-                LOGGER.debug(video_url)
-                break
+        video_list = video_info['image_video']['videoUrls']
+        if video_size == 0:
+            video_url = video_list[0]['url']
+        else:
+            for video in video_list:
+                if video['fileSize'] == video_size:
+                    video_url = video['url']
+                    LOGGER.debug(video_url)
+                    break
         if not video_url:
             log_err_n_exit('Failed to get video url, info content: %s',
                            video_info)
@@ -132,7 +178,7 @@ class YfbCourse(object):
         local_hls = '%s.m3u8' % lesson_info[KEY_LESSON_TITLE]
         aes_key = '%s.key' % lesson_info['mediaId']
         hls_content = self.req.get(hd_hls_url).content
-        #LOGGER.debug(hd_hls_content)
+        # LOGGER.debug(hd_hls_content)
         s = re.search(AES_KEY_REGEX, hls_content)
         if not s:
             log_err_n_exit('Failed to search the pattern')
@@ -153,8 +199,8 @@ class YfbCourse(object):
         r = self.req.get(url)
         if not r.ok:
             log_err_n_exit('Failed to download %s', url)
-        with open(filename, 'wb') as f:
-            for chunk in r:
+        with open(transform_filename(filename), 'wb') as f:
+            for chunk in r.iter_content(1024*1024*4):   # 4MB chunk
                 f.write(chunk)
 
 

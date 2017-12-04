@@ -8,3 +8,4 @@ ipython
 psutil
 icdiff
 yapf
+rope

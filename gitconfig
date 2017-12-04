@@ -1,0 +1,49 @@
+[core]
+    editor = vim
+    fileMode = true
+    compression = 9
+    preloadIndex = true
+    pager = "diff-so-fancy | less -n4 -r"
+[alias]
+    glog = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+    hist = log --pretty=format:\"%C(yellow)%h%C(reset) %C(green)%ad%C(reset) %C(red)|%C(reset) %s %C(bold blue)[%an]%C(reset)%C(yellow)%d%C(reset)\" --graph --date=short
+[color]
+    ui = auto
+[color "diff"]
+    meta = 227
+    frag = magenta bold
+    commit = 227 bold
+    old = red bold
+    new = green bold
+    whitespace = red reverse
+[color "diff-highlight"]
+     oldNormal = red bold
+     oldHighlight = red bold 52
+     newNormal = green bold
+     newHighlight = green bold 22
+[color "status"]
+    added = green
+    changed = yellow bold
+    untracked = red bold
+[diff]
+    tool = icdiff
+    algorithm = histogram
+    renames = copy
+    indentHeuristic = on
+[difftool]
+    prompt = false
+[difftool "icdiff"]
+    cmd = icdiff --line-numbers $LOCAL $REMOTE
+[merge]
+    tool = meld
+[log]
+    decorate = full
+[grep]
+    lineNumber = true
+    extendRegexp = true
+[push]
+    default = simple
+
+[credential "https://github.com"]
+    username = "DumAdudus"
+	helper = cache --timeout=3600

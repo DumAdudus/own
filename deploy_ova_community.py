@@ -89,8 +89,8 @@ class VCenterConstants(object):
         self.DATA_CENTER = 'Appliance Solutions'
         self.DATA_STORE = 'SC8K_LUN03_ALL_WanTw'
         self.CLUSTER = 'AS_NBVA_6.0'
-        self.RES_POOL = 'AS_Saipu_6.0'
-        self.VM_FOLDER_PARENT = 'AS_Saipu_6.0'
+        self.RES_POOL = 'AS_Lily_6.0'
+        self.VM_FOLDER_PARENT = 'AS_Lily_6.0'
 
         self.SEC_C = 71
         self.NETMASK = '255.255.252.0'
@@ -218,6 +218,7 @@ class OvaOnFly(object):
         self.ova_partial = None
         self.ovf = None
         self.menifest = None
+        self.cert = None
         self.vmdk = None
         self.vmdk_stream = None
         self.requests_session = requests.session()
@@ -228,12 +229,15 @@ class OvaOnFly(object):
         response = self.requests_session.get(self.ova_url, headers=headers)
         self.ova_partial = io.BytesIO(response.content)
         self.ovf = self._next()
-        second = self._next()
-        if second.name.endswith('.mf'):
-            self.menifest = second
-            self.vmdk = self._next()
-        else:
-            self.vmdk = second
+
+        for _ in range(3):
+            ova_obj = self._next()
+            if ova_obj.name.endswith('.mf'):
+                self.menifest = ova_obj
+            if ova_obj.name.endswith('.cert'):
+                self.cert = ova_obj
+            if ova_obj.name.endswith('.vmdk'):
+                self.vmdk = ova_obj
 
     def _next(self):
         file_in_tar = _FileInTar()
@@ -251,7 +255,7 @@ class OvaOnFly(object):
         if size_bytes[0] & _FileInTar.HEX_FLAG:
             # size in hex mode, remove the indicate flag from size bytes
             size_bytes[0] = size_bytes[0] & ~_FileInTar.HEX_FLAG
-            size_str = str(size_bytes).strip('\x00')
+            size_str = str(size_bytes).lstrip('\x00')
             file_in_tar.size = long(size_str.encode('hex'), 16)
         else:
             size_str = str(size_bytes).strip('\x00')
@@ -277,7 +281,7 @@ class OvaOnFly(object):
         return self._get_file_content(self.ovf)
 
     def getmembers(self):
-        return [self.ovf, self.menifest, self.vmdk]
+        return [self.ovf, self.menifest, self.cert, self.vmdk]
 
     def close(self):
         if self.ova_partial:
@@ -315,9 +319,9 @@ class OvaFile(object):  # pylint: disable=too-many-instance-attributes
             self.ova_file = tarfile.open(self.ova_uri)
 
         ova_members = self.ova_file.getmembers()
-        # 0: ovf; 1: mf; 2: disk1.vmdk.gz
+        # 0: ovf;   1: mf;  2: cert;    3:disk1
         self.ovf_file = ova_members[0]
-        self.vmdk1_info = ova_members[2]
+        self.vmdk1_info = ova_members[3]
         self.is_vmdk_gzipped = self.vmdk1_info.name.endswith('.gz')
         self.gzip_proc = None
         self.vmdk1_fobj = None

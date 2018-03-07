@@ -55,5 +55,6 @@
     "python.autoComplete.addBrackets": true,
     "[c]": {
         "editor.quickSuggestions": false
-    }
+    },
+    "python.pythonPath": "/usr/bin/python"
 }

@@ -18,6 +18,8 @@
     "editor.minimap.enabled": true,
     "editor.minimap.renderCharacters": false,
 
+    "editor.showFoldingControls": "always",
+
     "window.title": "${dirty}${activeEditorLong}${separator}${rootPath}",
     "window.menuBarVisibility": "toggle",
     "window.newWindowDimensions": "maximized",

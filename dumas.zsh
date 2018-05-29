@@ -27,7 +27,7 @@ alias aguu='apt update && apt upgrade'
 alias acs='apt search'
 
 alias pstree='pstree -lnpa'
-alias rsync='rsync -uazhP'
+alias rsync='rsync -uazhP --stats'
 
 # maven
 alias mvn=mvn-color
@@ -41,12 +41,12 @@ mvnsocks () {
 # SCM
 #export CVSROOT=:ext:brianma@rmncvs.rmnus.sen.symantec.com:/nbe/CVS
 #export P4CONFIG=.p4config
-export P4PORT=ssl:perforce.community.veritas.com:9666
-export P4USER=brian.ma
-export P4CLIENT=nbapp_bma
+#export P4PORT=ssl:perforce.community.veritas.com:9666
+#export P4USER=brian.ma
+#export P4CLIENT=nbapp_bma
 
 # My binaries
-export PATH=$PATH:/home/dumas/usr/local/bin:/home/dumas/.cargo/bin/
+export PATH=/home/dumas/usr/local/bin:/home/dumas/.cargo/bin/:$PATH
 
-# cruadv
-export CAP_PYOUT=1
+alias cloc='cloc --exclude-dir=.idea --processes=8'
+export LESS='-i -W -M'

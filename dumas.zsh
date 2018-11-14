@@ -27,7 +27,7 @@ alias aguu='apt update && apt upgrade'
 alias acs='apt search'
 
 alias pstree='pstree -lnpa'
-alias rsync='rsync -uazhP --stats'
+alias rsync='rsync -azhP --stats'
 
 # maven
 alias mvn=mvn-color
@@ -45,8 +45,25 @@ mvnsocks () {
 #export P4USER=brian.ma
 #export P4CLIENT=nbapp_bma
 
-# My binaries
-export PATH=/home/dumas/usr/local/bin:/home/dumas/.cargo/bin/:$PATH
-
 alias cloc='cloc --exclude-dir=.idea --processes=8'
-export LESS='-i -W -M'
+
+# less
+export LESS='-i -W -M -x4 -z-4 -R'
+#export LESS_TERMCAP_mb=$'\E[1;31m'
+#export LESS_TERMCAP_md=$'\E[1;36m'
+#export LESS_TERMCAP_me=$'\E[0m'
+#export LESS_TERMCAP_so=$'\E[01;44;33m'
+#export LESS_TERMCAP_se=$'\E[0m'
+#export LESS_TERMCAP_us=$'\E[1;32m'
+#export LESS_TERMCAP_ue=$'\E[0m'
+
+export GOROOT=/home/dumas/usr/local/lib/go-1.10.3
+#export GOROOT=/usr/lib/go-1.8
+export GOPATH="$HOME/go"
+export GOBIN="$GOPATH/bin"
+
+# My binaries
+export PATH=$GOPATH/bin:$GOROOT/bin:/home/dumas/usr/local/bin:/home/dumas/.cargo/bin/:$PATH
+
+export BAT_THEME='Monokai Extended Bright'
+export BAT_STYLE='header,numbers,grid'

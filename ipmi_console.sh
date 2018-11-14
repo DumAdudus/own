@@ -1,7 +1,7 @@
 #!/bin/bash
 set -u
 
-scriptfolder=$(dirname $(readlink -f $0))
+scriptfolder=$(dirname $(realpath $0))
 . ${scriptfolder}/shlib.sh
 . ${scriptfolder}/applib.sh
 
@@ -11,11 +11,10 @@ else
     appliance=$1
 fi
 
-hostname=$(expandname ${appliance})
-fqdn=$(ssh_getHostname $hostname)
-ipmihost=${fqdn/$hostname/$hostname-nm}
+hostname=$(get_short_name "$appliance")
+ipmihost=$(getipmihost "$hostname")
 
-echo Connecting to $appliance ...
+echo "Connecting to $appliance ..."
 ipmi_params="-I lanplus -H $ipmihost -U sysadmin -P P@ssw0rd"
-${SSH} lab-springboard -t ipmitool ${ipmi_params} sol deactivate
-${SSH} lab-springboard -t ipmitool -e % ${ipmi_params} sol activate
+${SSH} lab-springboard -- ipmitool "$ipmi_params" sol deactivate
+${SSH} lab-springboard -- ipmitool -e % "$ipmi_params" sol activate

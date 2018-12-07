@@ -48,7 +48,7 @@ mvnsocks () {
 alias cloc='cloc --exclude-dir=.idea --processes=8'
 
 # less
-export LESS='-i -W -M -x4 -z-4 -R'
+export LESS='--ignore-case --RAW-CONTROL-CHARS --HILITE-UNREAD --LONG-PROMPT --tabs=4 --window=-4'
 #export LESS_TERMCAP_mb=$'\E[1;31m'
 #export LESS_TERMCAP_md=$'\E[1;36m'
 #export LESS_TERMCAP_me=$'\E[0m'
@@ -57,13 +57,13 @@ export LESS='-i -W -M -x4 -z-4 -R'
 #export LESS_TERMCAP_us=$'\E[1;32m'
 #export LESS_TERMCAP_ue=$'\E[0m'
 
-export GOROOT=/home/dumas/usr/local/lib/go-1.10.3
+export GOROOT=/home/dumas/usr/local/lib/go
 #export GOROOT=/usr/lib/go-1.8
 export GOPATH="$HOME/go"
 export GOBIN="$GOPATH/bin"
 
 # My binaries
-export PATH=$GOPATH/bin:$GOROOT/bin:/home/dumas/usr/local/bin:/home/dumas/.cargo/bin/:$PATH
+export PATH=/home/dumas/usr/local/bin:$GOBIN:$GOROOT/bin:/home/dumas/.cargo/bin/:$PATH
 
 export BAT_THEME='Monokai Extended Bright'
 export BAT_STYLE='header,numbers,grid'

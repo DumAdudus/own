@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from collections import defaultdict
+from blist import blist
 
 PLAYERS = 9
 MAX_MARBLE = 25
@@ -26,7 +27,8 @@ DIV = 23
 JUMP = 2
 BACKJUMP = 7
 
-seq = [0]
+seq = blist([0])    # blist is supper fast
+#seq = [0]
 seq_idx = 0
 
 p_idx = 0
@@ -35,10 +37,10 @@ scores = defaultdict(int)
 
 def cycle_player():
     global p_idx
-    if p_idx == PLAYERS:
-        p_idx = 1
-    else:
+    if p_idx < PLAYERS:
         p_idx += 1
+    else:
+        p_idx = 1
 
 
 def jump():
@@ -59,18 +61,20 @@ def counter_jump():
         seq_idx = next_idx
 
 
-for m in range(1, MAX_MARBLE):
-    cycle_player()
-    #print p_idx, seq
-    if m >= DIV and m % DIV == 0:
-        counter_jump()
-        scores[p_idx] += m + seq[seq_idx]
-        #print m, seq[seq_idx]
-        seq.pop(seq_idx)
-        continue
+def main():
+    for m in range(1, MAX_MARBLE):
+        cycle_player()
+        #print p_idx, seq
+        if m >= DIV and m % DIV == 0:
+            counter_jump()
+            scores[p_idx] += m + seq[seq_idx]
+            #print m, seq[seq_idx]
+            seq.pop(seq_idx)
+            continue
 
-    jump()
-    seq.insert(seq_idx, m)
+        jump()
+        seq.insert(seq_idx, m)
 
+main()
 max_player = max(scores, key=scores.get)
 print max_player, scores[max_player]

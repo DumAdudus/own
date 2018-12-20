@@ -5,7 +5,6 @@ import re
 GENERATIONS = 300
 PADDINGV = 300
 LOOKAHEAD = '(?={})'
-#LOOKAHEAD = '{}'
 
 with open('q') as f:
     raw_info = f.read().splitlines()
@@ -31,7 +30,6 @@ while gen < GENERATIONS:
         for m in re.finditer(LOOKAHEAD.format(p[0].replace('.', '\\.')), ''.join(cur_state)):
             stage_state[m.start() + 2] = p[1]
     cur_state = stage_state
-    #print ''.join(cur_state)
     nsum = 0
     for m in re.finditer('#', ''.join(cur_state)):
         nsum += m.start() - zero_pos

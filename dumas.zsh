@@ -57,13 +57,18 @@ export LESS='--ignore-case --RAW-CONTROL-CHARS --HILITE-UNREAD --LONG-PROMPT --t
 #export LESS_TERMCAP_us=$'\E[1;32m'
 #export LESS_TERMCAP_ue=$'\E[0m'
 
-export GOROOT=/home/dumas/usr/local/lib/go
-#export GOROOT=/usr/lib/go-1.8
+#export GOROOT=/home/dumas/usr/local/lib/go
+#export GOROOT=/usr/lib/go-1.20
 export GOPATH="$HOME/go"
 export GOBIN="$GOPATH/bin"
 
 # My binaries
 export PATH=/home/dumas/usr/local/bin:$GOBIN:$GOROOT/bin:/home/dumas/.cargo/bin/:$PATH
 
+# batcat
 export BAT_THEME='Monokai Extended Bright'
 export BAT_STYLE='header,numbers,grid'
+export MANPAGER="sh -c 'col -bx | batcat -l man -p'"
+# export MANROFFOPT="-c"
+
+alias ug='ug --heading --smart-case --line-number'

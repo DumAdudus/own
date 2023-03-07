@@ -5,7 +5,7 @@ HYPHEN_INSENSITIVE="true"
 zstyle ':omz:update' mode auto      # update automatically without asking
 zstyle ':omz:update' frequency 10
 
-plugins=(git golang ripgrep rsync fzf history ssh-agent)
+plugins=(git golang ripgrep rsync fzf history)
 
 # ZSH settings
 setopt BANG_HIST
@@ -73,6 +73,6 @@ export MANPAGER="sh -c 'col -bx | batcat -l man -p'"
 
 alias ug='ug --heading --smart-case --line-number'
 
-export ANDROID_HOME=/usr/lib/android-sdk/ndk
+export ANDROID_HOME=/usr/lib/android-sdk
 
-source $HOME/.custom.zsh
+[ -f $HOME/.custom.zsh ] && source $HOME/.custom.zsh

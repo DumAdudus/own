@@ -5,7 +5,7 @@ HYPHEN_INSENSITIVE="true"
 zstyle ':omz:update' mode auto      # update automatically without asking
 zstyle ':omz:update' frequency 10
 
-plugins=(git golang ripgrep rsync fzf history)
+plugins=(git golang ripgrep rsync fzf history aws)
 
 # ZSH settings
 setopt BANG_HIST
@@ -59,7 +59,7 @@ export LESS='--ignore-case --RAW-CONTROL-CHARS --HILITE-UNREAD --LONG-PROMPT --t
 # golang
 export GOPATH="$HOME/go"
 export GOBIN="$GOPATH/bin"
-export GOOS=linux GOARCH=amd64 GOAMD64=v4
+export GOOS=linux GOARCH=amd64 GOAMD64=v4 CGO_ENABLED=0
 
 export EDITOR='vim'
 
@@ -68,10 +68,10 @@ export BAT_THEME='Monokai Extended Bright'
 export BAT_STYLE='header,numbers,grid'
 
 # manpage
-export MANPAGER="sh -c 'col -bx | batcat -l man -p'"
+#export MANPAGER="sh -c 'col -bx | batcat -l man -p'"
 # export MANROFFOPT="-c"
 
-alias ug='ug --heading --smart-case --line-number'
+alias ug='ug --heading --smart-case --line-number --dereference-recursive'
 
 export ANDROID_HOME=/usr/lib/android-sdk
 

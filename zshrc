@@ -5,7 +5,9 @@ HYPHEN_INSENSITIVE="true"
 zstyle ':omz:update' mode auto      # update automatically without asking
 zstyle ':omz:update' frequency 10
 
-plugins=(git golang ripgrep rsync fzf history aws)
+alias rsync='rsync -azhP --stats --cc=xxh3 --zc=zstd'
+
+plugins=(gitfast git rsync fzf history aws)
 
 # ZSH settings
 setopt BANG_HIST
@@ -40,7 +42,6 @@ alias aguu='apt update && apt upgrade'
 alias acs='apt search'
 
 alias pstree='pstree -lnpa'
-alias rsync='rsync -azhP --stats'
 
 # maven
 #alias mvn=mvn-color
@@ -74,5 +75,6 @@ export BAT_STYLE='header,numbers,grid'
 alias ug='ug --heading --smart-case --line-number --dereference-recursive'
 
 export ANDROID_HOME=/usr/lib/android-sdk
+export ANDROID_NDK_HOME=/usr/lib/android-ndk
 
 [ -f $HOME/.custom.zsh ] && source $HOME/.custom.zsh

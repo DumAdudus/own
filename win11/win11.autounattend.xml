@@ -172,6 +172,11 @@
                     <Description>Unloads the Default User Registry Hive</Description>
                     <Path>reg.exe unload "HKU\DefaultUser"</Path>
                 </RunSynchronousCommand>
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>11</Order>
+                    <Description>Enable OpenSSH Server</Description>
+                    <Path>powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -Command "Get-Content -LiteralPath 'C:\Windows\Setup\Scripts\openssh.ps1' -Raw | Invoke-Expression;"</Path>
+                </RunSynchronousCommand>
             </RunSynchronous>
         </component>
         <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
@@ -192,9 +197,10 @@
     <settings pass="oobeSystem">
         <component name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
             <InputLocale>0409:00000409</InputLocale>
-            <SystemLocale>en-US</SystemLocale>
-            <UILanguage>en-US</UILanguage>
-            <UserLocale>en-US</UserLocale>
+            <SystemLocale>zh-CN</SystemLocale>
+            <UILanguage>zh-CN</UILanguage>
+            <UILanguageFallback>en-US</UILanguageFallback>
+            <UserLocale>zh-CN</UserLocale>
         </component>
         <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
             <OOBE>
@@ -211,7 +217,7 @@
                         <Name>sec</Name>
                         <Group>Administrators</Group>
                         <Password>
-                            <Value>cABhAHMAcwB3AG8AcgBkAFAAYQBzAHMAdwBvAHIAZAA=</Value>
+                            <Value>MQBQAGEAcwBzAHcAbwByAGQA</Value>
                             <PlainText>false</PlainText>
                         </Password>
                     </LocalAccount>
@@ -222,7 +228,7 @@
                 <Enabled>true</Enabled>
                 <LogonCount>1</LogonCount>
                 <Password>
-                    <Value>cABhAHMAcwB3AG8AcgBkAFAAYQBzAHMAdwBvAHIAZAA=</Value>
+                    <Value>MQBQAGEAcwBzAHcAbwByAGQA</Value>
                     <PlainText>false</PlainText>
                 </Password>
             </AutoLogon>
@@ -236,10 +242,6 @@
                     <CommandLine>powershell.exe -NoProfile -Command "Disable-ComputerRestore -Drive 'C:\';"</CommandLine>
                 </SynchronousCommand> -->
                 <SynchronousCommand wcm:action="add">
-                    <Order>3</Order>
-                    <CommandLine>powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -Command "Get-Content -LiteralPath 'C:\Windows\Setup\Scripts\Warez.ps1' -Raw | Invoke-Expression;"</CommandLine>
-                </SynchronousCommand>
-                <SynchronousCommand wcm:action="add">
                     <Order>4</Order>
                     <CommandLine>powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -Command "Get-Content -LiteralPath 'C:\Windows\Setup\Scripts\cloudinit.ps1' -Raw | Invoke-Expression;"</CommandLine>
                 </SynchronousCommand>
@@ -247,10 +249,11 @@
                     <Order>5</Order>
                     <CommandLine>cmd.exe /c "C:\Windows\Setup\Scripts\currentuser.cmd &gt;&gt;"C:\Windows\Setup\Scripts\currentuser.log" 2&gt;&amp;1"</CommandLine>
                 </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <Order>6</Order>
+                    <CommandLine>powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -Command "Get-Content -LiteralPath 'C:\Windows\Setup\Scripts\Warez.ps1' -Raw | Invoke-Expression;"</CommandLine>
+                </SynchronousCommand>
             </FirstLogonCommands>
-        </component>
-        <component name="Microsoft-Windows-WinRE-RecoveryAgent" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
-            <UninstallWindowsRE>true</UninstallWindowsRE>
         </component>
     </settings>
     <Extensions>
@@ -344,7 +347,6 @@ Where-Object -FilterScript {
 
         <!--Powershell Script to Run Various Tweaks, Most of These are from the Chris Titus Tech Windows Utility (Credit:https://christitus.com/windows-tool/)-->
         <File path="C:\Windows\Setup\Scripts\wintweaks.ps1"><![CDATA[
-            # Start Transcript to capture script output
             $logFile = "C:\Windows\Setup\Scripts\wintweaks.log"
             Start-Transcript -Path $logFile
 
@@ -748,7 +750,7 @@ Where-Object -FilterScript {
             :: Disable Windows Spotlight on Settings
             reg.exe add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\CloudContent" /v DisableWindowsSpotlightActiveUser /t REG_DWORD /d 1 /f
             :: Set desktop background to a normal Windows picture
-            reg.exe add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v Wallpaper /t REG_SZ /d "C:\Windows\Web\Wallpaper\Windows\img0.jpg" /f
+            reg.exe add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v Wallpaper /t REG_SZ /d "C:\Windows\Web\Wallpaper\Windows\img19.jpg" /f
             :: Ensure the wallpaper style is set to fill (2 is for fill, 10 is for fit)
             reg.exe add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v WallpaperStyle /t REG_SZ /d "2" /f
 
@@ -908,12 +910,7 @@ Where-Object -FilterScript {
             reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{87BF85F4-2CE1-4160-96EA-52F554AA28A2}" /f
             reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{8A9C643C-3D74-4099-B6BD-9C6D170898B1}" /f
             :: Deleting QueueReporting
-            reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{E3176A65-4E44-4ED3-AA73-3283660ACB9C}" /f
-
-            :: Block Automatic Upgrade from Windows 10 22H2 to Windows 11 Although Manual Upgrade is Still Allowed - Credit CyberCPU Tech
-            reg.exe add "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" /v "TargetReleaseVersion" /t REG_DWORD /d 1 /f
-            reg.exe add "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" /v "TargetReleaseVersionInfo" /t REG_SZ /d "22H2" /f
-            reg.exe add "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" /v "ProductVersion" /t REG_SZ /d "Windows 10" /f]]>
+            reg.exe delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tasks\{E3176A65-4E44-4ED3-AA73-3283660ACB9C}" /f]]>
         </File>
 
         <!--Adds Items to Right-Click Context Menu-->
@@ -994,7 +991,7 @@ Where-Object -FilterScript {
 
             :: Start Menu Customizations
             :: Disables Recently Added Apps and Recommendations in the Start Menu
-            reg.exe add "HKU\DefaultUser\Software\Policies\Microsoft\Windows\Explorer" /v HideRecentlyAddedApps /t REG_DWORD /d 1 /f
+            ::reg.exe add "HKU\DefaultUser\Software\Policies\Microsoft\Windows\Explorer" /v HideRecentlyAddedApps /t REG_DWORD /d 1 /f
             reg.exe add "HKU\DefaultUser\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v Start_IrisRecommendations /t REG_DWORD /d 0 /f
 
             :: Hides or Removes People from Taskbar
@@ -1039,7 +1036,7 @@ Where-Object -FilterScript {
             reg.exe add "HKU\DefaultUser\SOFTWARE\Microsoft\Windows\CurrentVersion\AppDiagnostics" /v AppDiagnosticsEnabled /t REG_DWORD /d 0 /f
 
             :: Disables Delivery Optimization
-            reg.exe add "HKU\DefaultUser\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization" /v DODownloadMode /t REG_DWORD /d 0 /f
+            ::reg.exe add "HKU\DefaultUser\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization" /v DODownloadMode /t REG_DWORD /d 0 /f
 
             :: Disables Tablet Mode
             reg.exe add "HKU\DefaultUser\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" /v TabletMode /t REG_DWORD /d 0 /f
@@ -1379,10 +1376,7 @@ Where-Object -FilterScript {
             reg.exe add "HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\WindowsAI" /v "DisableAIDataAnalysis" /t REG_DWORD /d 1 /f
             reg.exe add "HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\Windows AI" /v "TurnOffSavingSnapshots" /t REG_DWORD /d 1 /f
 
-            :: timeout 20
-
-            :: Restart PC to Apply All Changes
-            :: shutdown /r -t 10]]>
+            net user %USERNAME% /logonpasswordchg:yes]]>
         </File>
 
         <File path="C:\Windows\Setup\Scripts\currentuser.ps1"><![CDATA[
@@ -1412,24 +1406,31 @@ Where-Object -FilterScript {
 	</DefaultLayoutOverride>
 </LayoutModificationTemplate>]]>
         </File>
-        <!-- MSI installation would take hours to finish, we need to skip this one -->
-        <File path="%TEMP%\QemuGuestAgent.ps1"><![CDATA[
-            $logFile = "C:\Windows\Setup\Scripts\QemuGuestAgent.log"
-            Start-Transcript -Path $logFile
-
-            foreach( $letter in 'DEFGHIJKLMNOPQRSTUVWXYZ'.ToCharArray() ) {
-                $exe = "${letter}:\qemu-ga-x86_64.msi";
-                if( Test-Path -LiteralPath $exe ) {
-                    Start-Process msiexec -ArgumentList '/i',$exe,'/quiet','/norestart','/log C:\Windows\Setup\Scripts\ga.log' -Wait;
-                    Stop-Transcript
-                    return
-                }
-            }
-            'QEMU guest agent is not included in unattend iso.'
-            Stop-Transcript]]>
+        <File path="C:\Users\Default\AppData\Local\Microsoft\Windows\Shell\LayoutModification.json"><![CDATA[
+{
+    "primaryOEMPins": [
+        {
+            "desktopAppLink": "%ALLUSERSPROFILE%\\Microsoft\\Windows\\Start Menu\\Programs\\Microsoft Edge.lnk"
+        },
+        {
+            "packagedAppId": "windows.immersivecontrolpanel_cw5n1h2txyewy!microsoft.windows.immersivecontrolpanel"
+        },
+        {
+            "desktopAppLink": "%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\File Explorer.lnk"
+        },
+        {
+            "desktopAppLink": "%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\System Tools\\Control Panel.lnk"
+        },
+        {
+            "desktopAppLink": "%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\System Tools\\Command Prompt.lnk"
+        },
+        {
+            "desktopAppLink": "%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Windows PowerShell\\Windows PowerShell.lnk"
+        }
+    ]
+}]]>
         </File>
         <File path="C:\Windows\Setup\Scripts\Warez.ps1"><![CDATA[
-            # Start Transcript to capture script output
             $logFile = "C:\Windows\Setup\Scripts\Warez.log"
             Start-Transcript -Path $logFile -IncludeInvocationHeader
 
@@ -1466,6 +1467,24 @@ Where-Object -FilterScript {
                     break
                 }
             }
+
+            Stop-Transcript]]>
+        </File>
+        <File path="C:\Windows\Setup\Scripts\openssh.ps1"><![CDATA[
+            $logFile = "C:\Windows\Setup\Scripts\openssh.log"
+            Start-Transcript -Path $logFile -IncludeInvocationHeader
+
+            Set-Location -ErrorAction Stop -LiteralPath $PSScriptRoot
+
+            Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+            Set-Service -Name sshd -StartupType 'Automatic'
+
+            # Set PowerShell as OpenSSH default shell
+            New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" `
+                            -Name DefaultShell `
+                            -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" `
+                            -PropertyType String `
+                            -Force
 
             Stop-Transcript]]>
         </File>

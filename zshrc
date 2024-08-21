@@ -5,7 +5,7 @@ HYPHEN_INSENSITIVE="true"
 zstyle ':omz:update' mode auto      # update automatically without asking
 zstyle ':omz:update' frequency 10
 
-alias rsync='rsync -azhP --stats --cc=xxh3 --zc=zstd'
+alias rsync='rsync --stats --cc=xxh3 --compress --zc=zstd -P'
 
 plugins=(gitfast git rsync fzf history aws)
 

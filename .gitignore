@@ -40,3 +40,10 @@ yfb_cookie.txt
 triddefs.trd
 *.log
 .vscode
+
+*.appx
+*.exe
+*.msi
+*.msixbundle
+
+**/cwrsync_*/

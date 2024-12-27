@@ -77,4 +77,9 @@ alias ug='ug --heading --smart-case --line-number --dereference-recursive'
 export ANDROID_HOME=/usr/lib/android-sdk
 export ANDROID_NDK_HOME=/usr/lib/android-ndk
 
+jwt-decode() {
+  jq -R 'split(".") |.[0:2] | map(gsub("-"; "+") | gsub("_"; "/") | gsub("%3D"; "=") | @base64d) | map(fromjson)' <<< $1
+}
+
+
 [ -f $HOME/.custom.zsh ] && source $HOME/.custom.zsh

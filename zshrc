@@ -19,7 +19,7 @@ source $ZSH/oh-my-zsh.sh
 # Make zsh know about hosts already accessed by SSH
 zstyle -e ':completion:*:(ssh|scp|sftp|rsh|rsync):hosts' hosts 'reply=(${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) /dev/null)"}%%[# ]*}//,/ })'
 
-export PATH="$HOME/go/bin:$HOME/.local/bin/:$PATH"
+export PATH="$HOME/go/bin:$HOME/.local/bin/:$HOME/.nimble/bin:$HOME/.cargo/bin:/opt/flutter/bin:$PATH"
 
 # editor for file types
 alias -s zsh=vim
@@ -60,9 +60,10 @@ export LESS='--ignore-case --RAW-CONTROL-CHARS --HILITE-UNREAD --LONG-PROMPT --t
 # golang
 export GOPATH="$HOME/go"
 export GOBIN="$GOPATH/bin"
-export GOOS=linux GOARCH=amd64 GOAMD64=v4 CGO_ENABLED=0
+export GOOS=linux GOARCH=amd64 GOAMD64=v3 CGO_ENABLED=0
 
 export EDITOR='vim'
+export CROC_SECRET=dumadudus
 
 # batcat
 export BAT_THEME='Monokai Extended Bright'
@@ -72,10 +73,13 @@ export BAT_STYLE='header,numbers,grid'
 #export MANPAGER="sh -c 'col -bx | batcat -l man -p'"
 # export MANROFFOPT="-c"
 
-alias ug='ug --heading --smart-case --line-number --dereference-recursive'
+alias ug='ug --heading --ignore-case --line-number --dereference-recursive'
 
 export ANDROID_HOME=/usr/lib/android-sdk
+#export ANDROID_SDK_HOME=/usr/lib/android-sdk
 export ANDROID_NDK_HOME=/usr/lib/android-ndk
+
+export no_proxy=github.com,golang.org,google.golang.org,crates.io,pub.dev,docker.com,docker.io,maven.org,gradle.org
 
 jwt-decode() {
   jq -R 'split(".") |.[0:2] | map(gsub("-"; "+") | gsub("_"; "/") | gsub("%3D"; "=") | @base64d) | map(fromjson)' <<< $1

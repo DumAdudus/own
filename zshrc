@@ -5,9 +5,8 @@ HYPHEN_INSENSITIVE="true"
 zstyle ':omz:update' mode auto      # update automatically without asking
 zstyle ':omz:update' frequency 10
 
-alias rsync='rsync --stats --cc=xxh3 --compress --zc=zstd -P'
 
-plugins=(gitfast git rsync fzf history aws)
+plugins=(gitfast git fzf history aws)
 
 # ZSH settings
 setopt BANG_HIST
@@ -42,6 +41,9 @@ alias aguu='apt update && apt upgrade'
 alias acs='apt search'
 
 alias pstree='pstree -lnpa'
+alias rsync='rsync -ahiPv --stats --cc=xxh3 --zc=zstd'
+alias rsync-sync='rsync --update --delete'
+alias findmnt='findmnt --tree -o TARGET,SOURCE,FSTYPE,SIZE,USED,AVAIL,USE%,OPTIONS'
 
 # maven
 #alias mvn=mvn-color
@@ -63,11 +65,19 @@ export GOBIN="$GOPATH/bin"
 export GOOS=linux GOARCH=amd64 GOAMD64=v3 CGO_ENABLED=0
 
 export EDITOR='vim'
-export CROC_SECRET=dumadudus
+export CROC_SECRET=dumadudus CROC_RELAY=216.250.97.19 CROC_PASS=dumadudus
 
 # batcat
 export BAT_THEME='Monokai Extended Bright'
 export BAT_STYLE='header,numbers,grid'
+
+# ffsend
+export FFSEND_VERBOSE=1
+export FFSEND_COPY=1
+export FFSEND_YES=1
+export FFSEND_DOWNLOAD_LIMIT=10
+export FFSEND_HOST=https://send.monks.tools # https://github.com/timvisee/send-instances/?tab=readme-ov-file#instances
+
 
 # manpage
 #export MANPAGER="sh -c 'col -bx | batcat -l man -p'"

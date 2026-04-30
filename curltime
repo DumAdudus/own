@@ -1,6 +1,7 @@
 #!/bin/bash
 
-curl -w @- -o /dev/null -H 'Pragma: no-cache' -H 'Cache-Control: no-cache,no-store' -s "$@" <<'EOF'
+curl -w @-  -H 'Pragma: no-cache' -H 'Cache-Control: no-cache,no-store' -s "$@" <<'EOF'
+\n
            dns:  %{time_namelookup}\n
  tcp_handshake:  %{time_connect}\n
  tls_handshake:  %{time_appconnect}\n

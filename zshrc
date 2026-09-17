@@ -78,6 +78,12 @@ export FFSEND_YES=1
 export FFSEND_DOWNLOAD_LIMIT=10
 export FFSEND_HOST=https://send.monks.tools # https://github.com/timvisee/send-instances/?tab=readme-ov-file#instances
 
+# rust
+export CARGO_PROFILE_RELEASE_LTO="fat"
+export CARGO_PROFILE_RELEASE_CODEGEN_UNITS=1
+export RUSTFLAGS='-Ctarget-cpu=native'
+
+export STHOMEDIR=/home/dev/syncthing
 
 # manpage
 #export MANPAGER="sh -c 'col -bx | batcat -l man -p'"

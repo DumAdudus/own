@@ -6,7 +6,8 @@ zstyle ':omz:update' mode auto      # update automatically without asking
 zstyle ':omz:update' frequency 10
 
 
-plugins=(gitfast git fzf history aws)
+plugins=(gitfast git fzf history)
+fpath=(/home/dev/.local/share/zsh/site-functions $fpath)
 
 # ZSH settings
 setopt BANG_HIST
@@ -18,13 +19,12 @@ source $ZSH/oh-my-zsh.sh
 # Make zsh know about hosts already accessed by SSH
 zstyle -e ':completion:*:(ssh|scp|sftp|rsh|rsync):hosts' hosts 'reply=(${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) /dev/null)"}%%[# ]*}//,/ })'
 
-export PATH="$HOME/go/bin:$HOME/.local/bin/:$HOME/.nimble/bin:$HOME/.cargo/bin:/opt/flutter/bin:$PATH"
+export PATH="$HOME/go/bin:$HOME/.local/bin/:$HOME/.cargo/bin:$HOME/.pub-cache/bin:/opt/flutter/bin:$PATH"
 
 # editor for file types
 alias -s zsh=vim
 alias -s h=vim
 alias -s cpp=vim
-alias -s jnlp='javaws -Xnosplash'
 
 # ==================================================================
 
@@ -65,7 +65,7 @@ export GOBIN="$GOPATH/bin"
 export GOOS=linux GOARCH=amd64 GOAMD64=v3 CGO_ENABLED=0
 
 export EDITOR='vim'
-export CROC_SECRET=dumadudus CROC_RELAY=216.250.97.19 CROC_PASS=dumadudus
+export CROC_SECRET=dumadudus
 
 # batcat
 export BAT_THEME='Monokai Extended Bright'
@@ -79,7 +79,7 @@ export FFSEND_DOWNLOAD_LIMIT=10
 export FFSEND_HOST=https://send.monks.tools # https://github.com/timvisee/send-instances/?tab=readme-ov-file#instances
 
 # rust
-export CARGO_PROFILE_RELEASE_LTO="fat"
+#export CARGO_PROFILE_RELEASE_LTO="fat"
 export CARGO_PROFILE_RELEASE_CODEGEN_UNITS=1
 export RUSTFLAGS='-Ctarget-cpu=native'
 
@@ -92,8 +92,7 @@ export STHOMEDIR=/home/dev/syncthing
 alias ug='ug --heading --ignore-case --line-number --dereference-recursive'
 
 export ANDROID_HOME=/usr/lib/android-sdk
-#export ANDROID_SDK_HOME=/usr/lib/android-sdk
-export ANDROID_NDK_HOME=/usr/lib/android-ndk
+export ANDROID_NDK_HOME=/usr/lib/android-sdk/ndk/30.0.16248370
 
 export no_proxy=github.com,golang.org,google.golang.org,crates.io,pub.dev,docker.com,docker.io,maven.org,gradle.org
 

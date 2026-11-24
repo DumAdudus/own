@@ -5,8 +5,10 @@ HYPHEN_INSENSITIVE="true"
 zstyle ':omz:update' mode auto      # update automatically without asking
 zstyle ':omz:update' frequency 10
 
+export PATH="$HOME/go/bin:$HOME/.local/bin/:$HOME/.cargo/bin:$HOME/.pub-cache/bin:/opt/flutter/bin:$PATH"
+export ZSH_PATINA_CONFIG_PATH="$HOME/oss/own/zsh-patina.toml"
 
-plugins=(gitfast git fzf history)
+plugins=(gitfast git fzf history zsh-patina)
 fpath=(/home/dev/.local/share/zsh/site-functions $fpath)
 
 # ZSH settings
@@ -19,7 +21,6 @@ source $ZSH/oh-my-zsh.sh
 # Make zsh know about hosts already accessed by SSH
 zstyle -e ':completion:*:(ssh|scp|sftp|rsh|rsync):hosts' hosts 'reply=(${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) /dev/null)"}%%[# ]*}//,/ })'
 
-export PATH="$HOME/go/bin:$HOME/.local/bin/:$HOME/.cargo/bin:$HOME/.pub-cache/bin:/opt/flutter/bin:$PATH"
 
 # editor for file types
 alias -s zsh=vim
@@ -34,14 +35,10 @@ alias t='tail -f'
 alias hgrep="fc -El 0 | grep"
 alias time='/usr/bin/time -v'
 
-
-# apt
-alias agi='apt install'
-alias aguu='apt update && apt upgrade'
-alias acs='apt search'
-
 alias pstree='pstree -lnpa'
-alias rsync='rsync -ahiPv --stats --cc=xxh3 --zc=zstd'
+export RSYNC_COMPRESS_LIST='zstd lz4 zlib none'
+# --archive --compress --human-readable --itemize-changes --partial --progress --verbose
+alias rsync='rsync -azhiPv --stats'
 alias rsync-sync='rsync --update --delete'
 alias findmnt='findmnt --tree -o TARGET,SOURCE,FSTYPE,SIZE,USED,AVAIL,USE%,OPTIONS'
 
@@ -86,8 +83,7 @@ export RUSTFLAGS='-Ctarget-cpu=native'
 export STHOMEDIR=/home/dev/syncthing
 
 # manpage
-#export MANPAGER="sh -c 'col -bx | batcat -l man -p'"
-# export MANROFFOPT="-c"
+export MANPAGER="batcat -plman"
 
 alias ug='ug --heading --ignore-case --line-number --dereference-recursive'
 
@@ -95,6 +91,7 @@ export ANDROID_HOME=/usr/lib/android-sdk
 export ANDROID_NDK_HOME=/usr/lib/android-sdk/ndk/30.0.16248370
 
 export no_proxy=github.com,golang.org,google.golang.org,crates.io,pub.dev,docker.com,docker.io,maven.org,gradle.org
+
 
 jwt-decode() {
   jq -R 'split(".") |.[0:2] | map(gsub("-"; "+") | gsub("_"; "/") | gsub("%3D"; "=") | @base64d) | map(fromjson)' <<< $1
